@@ -16,30 +16,30 @@
   <widget class="QTableView" name="tableView">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>25</x>
      <y>50</y>
-     <width>256</width>
-     <height>192</height>
+     <width>321</width>
+     <height>291</height>
     </rect>
    </property>
   </widget>
   <widget class="QTableView" name="tableView_2">
    <property name="geometry">
     <rect>
-     <x>420</x>
+     <x>395</x>
      <y>50</y>
-     <width>256</width>
-     <height>192</height>
+     <width>281</width>
+     <height>291</height>
     </rect>
    </property>
   </widget>
   <widget class="QTableView" name="tableView_3">
    <property name="geometry">
     <rect>
-     <x>780</x>
+     <x>735</x>
      <y>50</y>
-     <width>256</width>
-     <height>192</height>
+     <width>301</width>
+     <height>291</height>
     </rect>
    </property>
   </widget>
