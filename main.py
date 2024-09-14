@@ -4,16 +4,16 @@ from PyQt6.QtSql import *
 import sys
 
 # Основное окно
-Form, Window = uic.loadUiType("DataBase-Project/Forms/MainForm.ui")
+Form, Window = uic.loadUiType("Forms/MainForm.ui")
 
 # Основное окно распоряжение
-RasporajForm, _ = uic.loadUiType("DataBase-Project/Forms/rasporaj.ui")
+RasporajForm, _ = uic.loadUiType("Forms/rasporaj.ui")
 
 # Основное окно данные
-DataTableForm, _ = uic.loadUiType("DataBase-Project/Forms/dannie.ui")
+DataTableForm, _ = uic.loadUiType("Forms/dannie.ui")
 
 # Наша база
-db_name = 'DataBases/Database.db'
+db_name = 'DataBases/Database.sqlite'
 
 # Функция для подключения к базе данных
 def connect_db(db_name):
@@ -39,26 +39,34 @@ class DataTableDialog(QDialog, DataTableForm):
 
     # Настройка таблицы
     def setup_table(self):
-        self.model = QSqlTableModel(self)  
-        self.model.setTable("Gr_prog")  # Указываем имя таблиц
-        self.model.select()  # Загружает данные из таблицы
-        self.tableView.setModel(self.model) 
-        self.tableView.resizeColumnsToContents()  
+        self.model_1 = QSqlTableModel(self)
+        self.model_1.setTable("Gr_prog")  # Указываем имя таблиц
+        self.model_1.select()  # Загружает данные из таблицы
+        self.tableView.setModel(self.model_1)
+        self.tableView.resizeColumnsToContents()
+
+        self.model_2 = QSqlTableModel(self)
+        self.model_2.setTable("Gr_konk")
+        self.model_2.select()
+        self.tableView_2.setModel(self.model_2)
+        self.tableView_2.resizeColumnsToContents()
+
+        self.model_3 = QSqlTableModel(self)
+        self.model_3.setTable("VUZ")
+        self.model_3.select()
+        self.tableView_3.setModel(self.model_3)
+        self.tableView_3.resizeColumnsToContents()
 
 
 app = QApplication([])
-
-
 window = Window()
 form = Form()
 form.setupUi(window)
-
 
 if not connect_db(db_name):
     sys.exit(-1)
 else:
     print("Connection OK")
-
 
 rasporaj_dialog = RasporajDialog()  # Экземпляр для распоряжения
 data_table_dialog = DataTableDialog()  # Экземпляр для диалога с таблицами(наши данные)
@@ -71,7 +79,6 @@ form.pushButton.clicked.connect(data_table_dialog.exec)
 
 # Для закрытия окна при нажатии на "Выход" 
 form.pushButton_6.clicked.connect(window.close)
-
 
 window.show()
 app.exec()
