@@ -12,25 +12,16 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1111, 743)
+        Dialog.resize(1111, 410)
         self.tableView = QtWidgets.QTableView(parent=Dialog)
-        self.tableView.setGeometry(QtCore.QRect(25, 50, 341, 611))
+        self.tableView.setGeometry(QtCore.QRect(25, 50, 321, 291))
         self.tableView.setObjectName("tableView")
         self.tableView_2 = QtWidgets.QTableView(parent=Dialog)
-        self.tableView_2.setGeometry(QtCore.QRect(385, 50, 341, 611))
+        self.tableView_2.setGeometry(QtCore.QRect(395, 50, 281, 291))
         self.tableView_2.setObjectName("tableView_2")
         self.tableView_3 = QtWidgets.QTableView(parent=Dialog)
-        self.tableView_3.setGeometry(QtCore.QRect(750, 50, 341, 611))
+        self.tableView_3.setGeometry(QtCore.QRect(735, 50, 301, 291))
         self.tableView_3.setObjectName("tableView_3")
-        self.label = QtWidgets.QLabel(parent=Dialog)
-        self.label.setGeometry(QtCore.QRect(70, 20, 251, 20))
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(parent=Dialog)
-        self.label_2.setGeometry(QtCore.QRect(420, 20, 261, 20))
-        self.label_2.setObjectName("label_2")
-        self.label_3 = QtWidgets.QLabel(parent=Dialog)
-        self.label_3.setGeometry(QtCore.QRect(810, 20, 221, 20))
-        self.label_3.setObjectName("label_3")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -38,9 +29,6 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label.setText(_translate("Dialog", "Структура информации по грантам"))
-        self.label_2.setText(_translate("Dialog", "Структура информации по конкурсам"))
-        self.label_3.setText(_translate("Dialog", "Структура информации по ВУЗам"))
 
 
 if __name__ == "__main__":

@@ -24,11 +24,11 @@ def connect_db(db_name):
         return False
     return db
 
-# Для нашего диалогового окна - Распоряжение
+# Для нашего диалогового окна - Распоряжение-
 class RasporajDialog(QDialog, RasporajForm):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setupUi(self)
+        self.setupUi(self)  
 
 # Для окна с Данными и его таблицами
 class DataTableDialog(QDialog, DataTableForm):
@@ -44,21 +44,18 @@ class DataTableDialog(QDialog, DataTableForm):
         self.model_1.select()  # Загружает данные из таблицы
         self.tableView.setModel(self.model_1)
         self.tableView.resizeColumnsToContents()
-        self.tableView.setSortingEnabled(True)
 
         self.model_2 = QSqlTableModel(self)
         self.model_2.setTable("Gr_konk")
         self.model_2.select()
         self.tableView_2.setModel(self.model_2)
         self.tableView_2.resizeColumnsToContents()
-        self.tableView.setSortingEnabled(True)
 
         self.model_3 = QSqlTableModel(self)
         self.model_3.setTable("VUZ")
         self.model_3.select()
         self.tableView_3.setModel(self.model_3)
         self.tableView_3.resizeColumnsToContents()
-        self.tableView.setSortingEnabled(True)
 
 
 app = QApplication([])
@@ -79,7 +76,6 @@ form.pushButton_3.clicked.connect(rasporaj_dialog.exec)
 
 # Для открытия кнопки "Данные" и её таблиц
 form.pushButton.clicked.connect(data_table_dialog.exec)
-
 
 # Для закрытия окна при нажатии на "Выход" 
 form.pushButton_6.clicked.connect(window.close)
