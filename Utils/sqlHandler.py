@@ -19,9 +19,18 @@ class sqlHandler:
         self.column_names = self.select_column_names('Gr_prog')
         self.model = QSqlTableModel()
         self.model.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit)
-
         self.select()
         self.mainWindow.form.tableView.setModel(self.model)
+
+        # Подключение действий меню к методам
+        self.mainWindow.form.action.triggered.connect(lambda: self.load_data("НИР по грантам"))
+        self.mainWindow.form.action_2.triggered.connect(lambda: self.load_data("Конкурсы"))
+        self.mainWindow.form.action_3.triggered.connect(lambda: self.load_data("ВУЗы"))
+        self.mainWindow.form.action_4.triggered.connect(lambda: self.load_data("ВУЗы"))
+        self.mainWindow.form.action_5.triggered.connect(lambda: self.load_data("Конкурсы по грантам"))
+        self.mainWindow.form.action_6.triggered.connect(lambda: self.load_data("НИР по субъектам"))
+
+
 
     @contextmanager
     def get_db_connection(self):
@@ -34,6 +43,29 @@ class sqlHandler:
         finally:
             if self.db.isOpen():
                 self.db.close()
+
+    def load_data(self, data_type):
+        # Определение SQL-запроса в зависимости от типа данных
+        if data_type == "НИР по грантам":
+            query = "SELECT * FROM Gr_prog"
+        elif data_type == "Конкурсы":
+            query = "SELECT * FROM Gr_konk"
+        elif data_type == "ВУЗы":
+            query = "SELECT * FROM VUZ"
+        elif data_type == "Конкурсы по грантам":
+            query = "SELECT * FROM Gr_konk WHERE condition_for_grants"  # Укажите условие
+        elif data_type == "НИР по субъектам":
+            query = "SELECT * FROM Gr_prog WHERE condition_for_subjects"  # Укажите условие
+        else:
+            return
+
+        # Установка запроса в модель и обновление представления
+        self.model.setQuery(query)
+        if not self.model.select():
+            print(f"Failed to execute query: {query}")
+
+
+
 
     def connect_db(self, db_file: str):
         '''
@@ -121,6 +153,7 @@ class sqlHandler:
         query = self.query_select + self.query_join + self.query_where + self.query_orderBy
         self.model.setQuery(query)
         self.model.select()
+
 
     def resetFilter(self) -> None:
         '''

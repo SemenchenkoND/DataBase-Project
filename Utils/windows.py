@@ -9,7 +9,7 @@ from Utils.sqlHandler import sqlHandler
 
 class MainWindow:
     def __init__(self, db_file):
-        self.Form, self.Window = uic.loadUiType("UI/grant_form.ui")
+        self.Form, self.Window = uic.loadUiType("UI/grant_form1.ui")
         self.app = QApplication([])
         self.window = self.Window()
         self.form = self.Form()
@@ -19,6 +19,10 @@ class MainWindow:
         self.sqlHandler = sqlHandler(db_file, self)
         self.addWindow = addWindow(self)
         self.changeWindow = changeWindow(self)
+
+
+
+
 
 
         self.combos_default_and_column = {
