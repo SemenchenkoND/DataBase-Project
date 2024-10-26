@@ -2,14 +2,14 @@ from PyQt6 import uic
 from PyQt6.QtCore import QRegularExpression
 from PyQt6.QtGui import QRegularExpressionValidator
 from PyQt6.QtSql import QSqlQuery
-from PyQt6.QtWidgets import QApplication, QHeaderView
+from PyQt6.QtWidgets import QApplication, QHeaderView, QMessageBox
 
 from Utils.sqlHandler import sqlHandler
 
 
 class MainWindow:
     def __init__(self, db_file):
-        self.Form, self.Window = uic.loadUiType("UI/grant_form.ui")
+        self.Form, self.Window = uic.loadUiType("UI/grant_form1.ui")
         self.app = QApplication([])
         self.window = self.Window()
         self.form = self.Form()
@@ -72,6 +72,56 @@ class MainWindow:
         self.sqlHandler.query_orderBy = f'\nORDER BY {col_name} {self._current_sorting_dir}'
         self.sqlHandler.select()
 
+    def get_selected_row_values(self):
+        selected_indexes = self.form.tableView.selectedIndexes()
+        if not selected_indexes:
+            print('Строка не выбрана')
+            return (None, None)
+        data = [index.data() for index in selected_indexes]
+
+        codkon = data[0]
+        codnir = data[1]
+        pk = {
+            'codkon': codkon,
+            'g1': codnir
+        }
+        other_vals = data[2:]
+        return (pk, other_vals)
+
+    def delete_row(self):
+        pk, row_values = self.get_selected_row_values()
+        if not pk:
+            msg = QMessageBox()
+            msg.setText("Для удаления строки выделите её и нажмите на кнопку удаления строки")
+            msg.exec()
+            return
+
+        title = row_values[14 - 2]
+
+        msgBox = QMessageBox()
+        msgBox.setText(f"Удалить грант с кодом НИР {pk['g1']}?")
+        msgBox.setInformativeText(f"Будет удален грант с названием: {title}")
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard)
+        msgBox.button(QMessageBox.StandardButton.Save).setText('Удалить')
+        msgBox.button(QMessageBox.StandardButton.Discard).setText('Отмена')
+        msgBox.setDefaultButton(QMessageBox.StandardButton.Save)
+        ret = msgBox.exec()
+
+        if ret == QMessageBox.StandardButton.Save:
+            query = 'DELETE FROM Gr_prog WHERE codkon = "{}" AND g1 = {}'.format(pk['codkon'], pk['g1'])
+            isGood = self.sqlHandler.query.exec(query)
+            msg = QMessageBox()
+            if not isGood:
+                msg.setText("Не удалось удалить строку из базы данных")
+                msg.exec()
+                return
+            else:
+                msg.setText("Выбранная строка была удалена")
+                msg.exec()
+
+            self.sqlHandler._sum_financing()
+            self.sqlHandler._count_NIRs()
+            self.sqlHandler.select()
 
 
 class addWindow:
@@ -131,35 +181,35 @@ class addWindow:
         codvuz = self.mainWindow.sqlHandler.vuzes[self.form.vuzCombo.itemText(index)]
         self.form.vuzcodLine.setText(str(codvuz))
 
-    # def add_NIR_to_db(self):
-    #     '''
-    #             Метод для добавления новой записи НИР в БД.
-    #             '''
-    #     cod_nir = self.form.codnir.text()
-    #     cod_grnti = self.form.codGRNTILine.text()
-    #     cod_konk = self.form.codkonkLine.text()
-    #     cod_vuz = self.form.vuzcodLine.text()
-    #     ruk = self.form.rukLine.text()
-    #     dolzh = self.form.dolzhLine.text()
-    #     science_zvan = self.form.scienceZvanLine.text()
-    #     science_step = self.form.scienceStepLine.text()
-    #     finans = self.form.finansLine.text()
-    #     nir_desc = self.form.nirDescText.toPlainText()
-    #
-    #     # SQL-запрос для вставки данных
-    #     query_str = f'''
-    #                 INSERT INTO Gr_prog (g1, codkon, )
-    #                 VALUES ("{cod_nir}", "{cod_grnti}", "{cod_konk}", "{cod_vuz}", "{ruk}",
-    #                         "{dolzh}", "{science_zvan}", "{science_step}", "{finans}", "{nir_desc}")
-    #             '''
-    #
-    #     if not self.query.exec(query_str):
-    #         print("Ошибка добавления НИР:", self.query.lastError().text())
-    #         return
-    #     print("НИР успешно добавлен!")
-    #
-    #     # Закрытие окна после добавления
-    #     self.window.close()
+    def add_NIR_to_db(self):
+        '''
+                Метод для добавления новой записи НИР в БД.
+                '''
+        cod_nir = self.form.codnir.text()
+        cod_grnti = self.form.codGRNTILine.text()
+        cod_konk = self.form.codkonkLine.text()
+        cod_vuz = self.form.vuzcodLine.text()
+        ruk = self.form.rukLine.text()
+        dolzh = self.form.dolzhLine.text()
+        science_zvan = self.form.scienceZvanLine.text()
+        science_step = self.form.scienceStepLine.text()
+        finans = self.form.finansLine.text()
+        nir_desc = self.form.nirDescText.toPlainText()
+
+        # SQL-запрос для вставки данных
+        query_str = f'''
+                    INSERT INTO Gr_prog (g1, codkon, )
+                    VALUES ("{cod_nir}", "{cod_grnti}", "{cod_konk}", "{cod_vuz}", "{ruk}",
+                            "{dolzh}", "{science_zvan}", "{science_step}", "{finans}", "{nir_desc}")
+                '''
+
+        if not self.query.exec(query_str):
+            print("Ошибка добавления НИР:", self.query.lastError().text())
+            return
+        print("НИР успешно добавлен!")
+
+        # Закрытие окна после добавления
+        self.window.close()
 
 
     def show(self):
