@@ -2,7 +2,7 @@ import sys
 from contextlib import contextmanager
 
 from PyQt6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
-from PyQt6.QtWidgets import QComboBox
+from PyQt6.QtWidgets import QComboBox, QMessageBox
 
 
 class sqlHandler:
@@ -30,6 +30,7 @@ class sqlHandler:
         self.mainWindow.form.action_5.triggered.connect(lambda: self.load_data("Конкурсы по грантам"))
         self.mainWindow.form.action_6.triggered.connect(lambda: self.load_data("НИР по субъектам"))
 
+        # self.mainWindow.form.pushButton_5.clicked.connect(self.delete_selected_row)
 
 
     @contextmanager
@@ -64,7 +65,41 @@ class sqlHandler:
         if not self.model.select():
             print(f"Failed to execute query: {query}")
 
-
+    # def delete_selected_row(self):
+    #     selected_indexes = self.tableView.selectionModel().selectedRows()
+    #
+    #     if not selected_indexes:
+    #         QMessageBox.warning(self.centralwidget, "Предупреждение", "Пожалуйста, выберите строку для удаления.")
+    #     return
+    #
+    #     selected_row = selected_indexes[0].row()
+    #     selected_id = self.tableView.model().index(selected_row, 0).data()
+    #
+    #     confirmation = QMessageBox.question(
+    #     self.centralwidget,
+    #     "Подтверждение удаления",
+    #     "Точно ли вы хотите удалить эту строку?",
+    #     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+    #     )
+    #
+    #     if confirmation == QMessageBox.StandardButton.Yes:
+    #         conn = sqlite3.connect('DataBases\\DataBase.sqlite')  # Укажите путь к вашей БД
+    #         cursor = conn.cursor()
+    #
+    #         try:
+    #             cursor.execute("DELETE FROM your_table_name WHERE id = ?", (selected_id,))
+    #             conn.commit()
+    #             QMessageBox.information(self.centralwidget, "Успех", "Строка успешно удалена.")
+    #             self.load_data()  # Обновление таблицы после удаления
+    #
+    #         except sqlite3.Error as e:
+    #             QMessageBox.critical(self.centralwidget, "Ошибка", f"Не удалось удалить строку: {e}")
+    #
+    #         finally:
+    #             cursor.close()
+    #             conn.close()
+    #     else:
+    #             QMessageBox.information(self.centralwidget, "Отмена", "Удаление отменено.")
 
 
     def connect_db(self, db_file: str):
@@ -234,3 +269,19 @@ class sqlHandler:
                 first = False
             else:
                 self.query_where += f'\n\tAND VUZ.{column} = "{text}"'
+
+    def _sum_financing(self):
+        self.query.exec('''
+                        UPDATE Gr_konk
+                        SET k12 = (
+                            SELECT SUM(g5) from Gr_prog WHERE Gr_konk.codkon = Gr_prog.codkon
+                        )
+                        ''')
+
+    def _count_NIRs(self):
+        self.query.exec('''
+                        UPDATE Gr_konk
+                        SET npr = (
+                            SELECT COUNT(*) from Gr_prog WHERE Gr_konk.codkon = Gr_prog.codkon
+                        )
+                        ''')
