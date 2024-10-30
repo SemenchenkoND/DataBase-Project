@@ -1,8 +1,8 @@
-from Utils.windows import MainWindow
+from Utils.mainWindow import MainWindow
 
 
 def main():
-    db_file = "DataBases\\DataBase.sqlite"
+    db_file = "DataBases\\db_filled.sqlite"
     mainWindow = MainWindow(db_file)
     mainWindow.window.show()
     mainWindow.app.exec()
